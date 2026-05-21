@@ -1252,7 +1252,7 @@ theorem nodup_keys [EquivBEq α] [LawfulHashable α] (h : m.WF) :
   (m.distinct_keys h).imp ne_of_beq_false
 
 @[simp, grind _=_]
-theorem map_fst_toList_eq_keys [EquivBEq α] [LawfulHashable α] (h : m.WF) :
+theorem map_fst_toList_eq_keys (h : m.WF) :
     m.toList.map Sigma.fst = m.keys := by
   apply Raw₀.map_fst_toList_eq_keys ⟨m, h.size_buckets_pos⟩
 
@@ -1341,7 +1341,7 @@ namespace Const
 variable {β : Type v} {m : Raw α (fun _ => β)}
 
 @[simp, grind _=_]
-theorem map_fst_toList_eq_keys [EquivBEq α] [LawfulHashable α] (h : m.WF) :
+theorem map_fst_toList_eq_keys (h : m.WF) :
     (Raw.Const.toList m).map Prod.fst = m.keys := by
   apply Raw₀.Const.map_fst_toList_eq_keys ⟨m, h.size_buckets_pos⟩
 
@@ -1411,7 +1411,7 @@ theorem toList_toArray (h : m.WF) :
   Raw₀.toList_toArray_eq_toList ⟨m, h.size_buckets_pos⟩
 
 @[simp]
-theorem map_fst_toArray_eq_keysArray [EquivBEq α] [LawfulHashable α] (h : m.WF) :
+theorem map_fst_toArray_eq_keysArray (h : m.WF) :
     m.toArray.map Sigma.fst = m.keysArray :=
   Raw₀.map_fst_toArray_eq_keysArray ⟨m, h.size_buckets_pos⟩
 
@@ -1456,7 +1456,7 @@ theorem toList_toArray (h : m.WF) :
   Raw₀.Const.toList_toArray_eq_toList ⟨m, h.size_buckets_pos⟩
 
 @[simp]
-theorem map_fst_toArray_eq_keysArray [EquivBEq α] [LawfulHashable α] (h : m.WF) :
+theorem map_fst_toArray_eq_keysArray (h : m.WF) :
     (Raw.Const.toArray m).map Prod.fst = m.keysArray :=
   Raw₀.Const.map_fst_toArray_eq_keysArray ⟨m, h.size_buckets_pos⟩
 
@@ -1785,10 +1785,10 @@ theorem all_eq_false_iff_exists_mem_get [LawfulBEq α] {p : (_ : α) → β → 
     m.all p = false ↔ ∃ (a : α) (h : a ∈ m), p a (Const.get m a h) = false := by
   apply all_eq_false_iff_exists_contains_get h
 
-theorem any_keys [LawfulHashable α] [EquivBEq α] {p : α → Bool} (h : m.WF) :
+theorem any_keys {p : α → Bool} (h : m.WF) :
     m.keys.any p = m.any (fun a _ => p a) := Raw₀.Const.any_keys ⟨m, h.size_buckets_pos⟩
 
-theorem all_keys [LawfulHashable α] [EquivBEq α] {p : α → Bool} (h : m.WF) :
+theorem all_keys {p : α → Bool} (h : m.WF) :
     m.keys.all p = m.all (fun a _ => p a) := Raw₀.Const.all_keys ⟨m, h.size_buckets_pos⟩
 
 end Const
@@ -5234,7 +5234,8 @@ theorem emptyWithCapacity_equiv_iff_isEmpty [EquivBEq α] [LawfulHashable α] {c
 theorem empty_equiv_iff_isEmpty [EquivBEq α] [LawfulHashable α] (h : m.WF) : ∅ ~m m ↔ m.isEmpty :=
   emptyWithCapacity_equiv_iff_isEmpty h
 
-theorem equiv_iff_toList_perm {m₁ m₂ : DHashMap.Raw α β} [EquivBEq α] [LawfulHashable α] :
+omit [BEq α] [Hashable α] in
+theorem equiv_iff_toList_perm {m₁ m₂ : DHashMap.Raw α β} :
     m₁ ~m m₂ ↔ m₁.toList.Perm m₂.toList :=
   ⟨Equiv.toList_perm, Equiv.of_toList_perm⟩
 
@@ -5272,11 +5273,13 @@ namespace Const
 
 variable {β : Type v} {m₁ m₂ : DHashMap.Raw α fun _ => β}
 
-theorem equiv_iff_toList_perm [EquivBEq α] [LawfulHashable α] :
+omit [BEq α] [Hashable α] in
+theorem equiv_iff_toList_perm :
     m₁ ~m m₂ ↔ (Const.toList m₁).Perm (Const.toList m₂) :=
   ⟨Equiv.constToList_perm, Equiv.of_constToList_perm⟩
 
-theorem equiv_iff_keys_unit_perm [EquivBEq α] [LawfulHashable α]
+omit [BEq α] [Hashable α] in
+theorem equiv_iff_keys_unit_perm
     {m₁ m₂ : DHashMap.Raw α fun _ => Unit} :
     m₁ ~m m₂ ↔ m₁.keys.Perm m₂.keys :=
   ⟨Equiv.keys_perm, Equiv.of_keys_unit_perm⟩

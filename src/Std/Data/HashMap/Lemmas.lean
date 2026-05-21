@@ -426,7 +426,7 @@ theorem getD_of_isEmpty [EquivBEq α] [LawfulHashable α] {a : α} {fallback : �
 
 @[simp]
 theorem getD_insert_self [EquivBEq α] [LawfulHashable α] {k : α} {fallback v : β} :
-   (m.insert k v).getD k fallback = v :=
+  (m.insert k v).getD k fallback = v :=
   DHashMap.Const.getD_insert_self
 
 theorem getD_eq_fallback_of_contains_eq_false [EquivBEq α] [LawfulHashable α] {a : α}
@@ -668,7 +668,7 @@ theorem getKeyD_of_isEmpty [EquivBEq α] [LawfulHashable α] {a : α} {fallback 
 
 @[simp]
 theorem getKeyD_insert_self [EquivBEq α] [LawfulHashable α] {k fallback : α} {v : β} :
-   (m.insert k v).getKeyD k fallback = k :=
+  (m.insert k v).getKeyD k fallback = k :=
   DHashMap.getKeyD_insert_self
 
 theorem getKeyD_eq_fallback_of_contains_eq_false [EquivBEq α] [LawfulHashable α] {a : α}
@@ -900,7 +900,7 @@ theorem contains_of_mem_keysArray [EquivBEq α] [LawfulHashable α] {k : α}
   DHashMap.contains_of_mem_keysArray h'
 
 @[simp, grind _=_]
-theorem map_fst_toList_eq_keys [EquivBEq α] [LawfulHashable α] :
+theorem map_fst_toList_eq_keys :
     m.toList.map Prod.fst = m.keys :=
   DHashMap.Const.map_fst_toList_eq_keys
 
@@ -963,7 +963,7 @@ theorem toList_toArray :
   DHashMap.Const.toList_toArray
 
 @[simp]
-theorem map_fst_toArray_eq_keysArray [EquivBEq α] [LawfulHashable α] :
+theorem map_fst_toArray_eq_keysArray :
     m.toArray.map Prod.fst = m.keysArray :=
   DHashMap.Const.map_fst_toArray_eq_keysArray
 
@@ -1151,11 +1151,11 @@ theorem all_eq_false_iff_exists_mem_getElem [LawfulBEq α] {p : α → β → Bo
     m.all p = false ↔ ∃ (a : α) (h : a ∈ m), p a (m[a]'h) = false :=
   DHashMap.Const.all_eq_false_iff_exists_mem_get
 
-theorem any_keys [LawfulHashable α] [EquivBEq α] {p : α → Bool} :
+theorem any_keys {p : α → Bool} :
     m.keys.any p = m.any (fun a _ => p a) :=
   DHashMap.Const.any_keys
 
-theorem all_keys [LawfulHashable α] [EquivBEq α] {p : α → Bool} :
+theorem all_keys {p : α → Bool} :
     m.keys.all p = m.all (fun a _ => p a) :=
   DHashMap.Const.all_keys
 
@@ -1627,7 +1627,7 @@ theorem getKey!_union_of_not_mem_right [Inhabited α]
 
 /- size -/
 theorem size_union_of_not_mem [EquivBEq α] [LawfulHashable α] :
-   (∀ (a : α), a ∈ m₁ → ¬a ∈ m₂) →
+  (∀ (a : α), a ∈ m₁ → ¬a ∈ m₂) →
     (m₁ ∪ m₂).size = m₁.size + m₂.size :=
   @DHashMap.size_union_of_not_mem _ _ _ _ m₁.inner m₂.inner _ _
 
@@ -3164,11 +3164,11 @@ theorem emptyWithCapacity_equiv_iff_isEmpty [EquivBEq α] [LawfulHashable α] {c
 theorem empty_equiv_iff_isEmpty [EquivBEq α] [LawfulHashable α] : ∅ ~m m ↔ m.isEmpty :=
   emptyWithCapacity_equiv_iff_isEmpty
 
-theorem equiv_iff_toList_perm [EquivBEq α] [LawfulHashable α] :
+theorem equiv_iff_toList_perm :
     m₁ ~m m₂ ↔ m₁.toList.Perm m₂.toList :=
   ⟨Equiv.toList_perm, Equiv.of_toList_perm⟩
 
-theorem equiv_iff_keys_unit_perm {m₁ m₂ : HashMap α Unit} [EquivBEq α] [LawfulHashable α] :
+theorem equiv_iff_keys_unit_perm {m₁ m₂ : HashMap α Unit} :
     m₁ ~m m₂ ↔ m₁.keys.Perm m₂.keys :=
   ⟨Equiv.keys_perm, Equiv.of_keys_unit_perm⟩
 

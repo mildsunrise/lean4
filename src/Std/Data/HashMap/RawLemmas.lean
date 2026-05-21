@@ -910,7 +910,7 @@ theorem contains_of_mem_keysArray [EquivBEq α] [LawfulHashable α] (h : m.WF) {
   DHashMap.Raw.contains_of_mem_keysArray h.out h'
 
 @[simp, grind _=_]
-theorem map_fst_toList_eq_keys [EquivBEq α] [LawfulHashable α] (h : m.WF) :
+theorem map_fst_toList_eq_keys (h : m.WF) :
     m.toList.map Prod.fst = m.keys :=
   DHashMap.Raw.Const.map_fst_toList_eq_keys h.out
 
@@ -973,7 +973,7 @@ theorem toList_toArray (h : m.WF) :
   DHashMap.Raw.Const.toList_toArray h.out
 
 @[simp]
-theorem map_fst_toArray_eq_keysArray [EquivBEq α] [LawfulHashable α] (h : m.WF) :
+theorem map_fst_toArray_eq_keysArray (h : m.WF) :
     m.toArray.map Prod.fst = m.keysArray :=
   DHashMap.Raw.Const.map_fst_toArray_eq_keysArray h.out
 
@@ -1162,10 +1162,10 @@ theorem all_eq_false_iff_exists_mem_getElem [LawfulBEq α] {p : α → β → Bo
     m.all p = false ↔ ∃ (a : α) (h : a ∈ m), p a (m[a]'h) = false :=
   DHashMap.Raw.Const.all_eq_false_iff_exists_contains_get h.out
 
-theorem any_keys [LawfulHashable α] [EquivBEq α] {p : α → Bool} (h : m.WF) :
+theorem any_keys {p : α → Bool} (h : m.WF) :
     m.keys.any p = m.any (fun a _ => p a) := DHashMap.Raw.Const.any_keys h.out
 
-theorem all_keys [LawfulHashable α] [EquivBEq α] {p : α → Bool} (h : m.WF) :
+theorem all_keys {p : α → Bool} (h : m.WF) :
     m.keys.all p = m.all (fun a _ => p a) := DHashMap.Raw.Const.all_keys h.out
 
 variable {ρ : Type w} [ForIn Id ρ (α × β)]
@@ -3230,11 +3230,13 @@ theorem empty_equiv_iff_isEmpty [EquivBEq α] [LawfulHashable α] (h : m.WF) :
     ∅ ~m m ↔ m.isEmpty :=
   Equiv.comm.trans (equiv_empty_iff_isEmpty h)
 
-theorem equiv_iff_toList_perm {m₁ m₂ : Raw α β} [EquivBEq α] [LawfulHashable α] :
+omit [BEq α] [Hashable α] in
+theorem equiv_iff_toList_perm {m₁ m₂ : Raw α β} :
     m₁ ~m m₂ ↔ m₁.toList.Perm m₂.toList :=
   ⟨Equiv.toList_perm, Equiv.of_toList_perm⟩
 
-theorem equiv_iff_keys_unit_perm [EquivBEq α] [LawfulHashable α] {m₁ m₂ : Raw α Unit} :
+omit [BEq α] [Hashable α] in
+theorem equiv_iff_keys_unit_perm {m₁ m₂ : Raw α Unit} :
     m₁ ~m m₂ ↔ m₁.keys.Perm m₂.keys :=
   ⟨Equiv.keys_perm, Equiv.of_keys_unit_perm⟩
 
