@@ -66,7 +66,7 @@ See also
 * `Init.Data.List.Count` for lemmas about `List.countP` and `List.count`.
 * `Init.Data.List.Erase` for lemmas about `List.eraseP` and `List.erase`.
 * `Init.Data.List.Find` for lemmas about `List.find?`, `List.findSome?`, `List.findIdx`,
-  `List.findIdx?`, and `List.indexOf`
+  `List.findIdx?`, and `List.idxOf`
 * `Init.Data.List.MinMax` for lemmas about `List.min?`, `List.min`, `List.max?` and `List.max`.
 * `Init.Data.List.Pairwise` for lemmas about `List.Pairwise` and `List.Nodup`.
 * `Init.Data.List.Sublist` for lemmas about `List.Subset`, `List.Sublist`, `List.IsPrefix`,

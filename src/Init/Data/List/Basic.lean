@@ -39,7 +39,7 @@ The operations are organized as follow:
 * Basic operations:
   `map`, `filter`, `filterMap`, `foldr`, `append`, `flatten`, `pure`, `flatMap`, `replicate`, and
   `reverse`.
-* Additional functions defined in terms of these: `leftpad`, `rightPad`, and `reduceOption`.
+* Additional functions defined in terms of these: `leftpad`, `rightpad`, and `reduceOption`.
 * Operations using indexes: `mapIdx`.
 * List membership: `isEmpty`, `elem`, `contains`, `mem` (and the `∈` notation),
   and decidability for predicates quantifying over membership in a `List`.
@@ -47,7 +47,7 @@ The operations are organized as follow:
   `isPrefixOf`, `isPrefixOf?`, `isSuffixOf`, `isSuffixOf?`, `Subset`, `Sublist`,
   `rotateLeft` and `rotateRight`.
 * Manipulating elements: `replace`, `modify`, `insert`, `insertIdx`, `erase`, `eraseP`, `eraseIdx`.
-* Finding elements: `find?`, `findSome?`, `findIdx`, `indexOf`, `findIdx?`, `indexOf?`,
+* Finding elements: `find?`, `findSome?`, `findIdx`, `idxOf`, `findIdx?`, `idxOf?`,
  `countP`, `count`, and `lookup`.
 * Logic: `any`, `all`, `or`, and `and`.
 * Zippers: `zipWith`, `zip`, `zipWithAll`, and `unzip`.
