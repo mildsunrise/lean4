@@ -249,21 +249,21 @@ variable [BEq α]
 
 @[grind =]
 theorem count_cons {a b : α} {l : List α} :
-    count a (b :: l) = count a l + if b == a then 1 else 0 := by
+    count a (b :: l) = count a l + if a == b then 1 else 0 := by
   simp [count, countP_cons]
 
-theorem count_eq_countP {a : α} {l : List α} : count a l = countP (· == a) l := rfl
-theorem count_eq_countP' {a : α} : count a = countP (· == a) := by
+theorem count_eq_countP {a : α} {l : List α} : count a l = countP (a == ·) l := rfl
+theorem count_eq_countP' {a : α} : count a = countP (a == ·) := by
   funext l
   apply count_eq_countP
 
 @[grind =]
-theorem count_eq_length_filter {a : α} {l : List α} : count a l = (filter (· == a) l).length := by
+theorem count_eq_length_filter {a : α} {l : List α} : count a l = (filter (a == ·) l).length := by
   simp [count, countP_eq_length_filter]
 
 @[grind =]
 theorem count_tail : ∀ {l : List α} {a : α},
-      l.tail.count a = l.count a - if l.head? == some a then 1 else 0
+      l.tail.count a = l.count a - if some a == l.head? then 1 else 0
   | [], a => by simp
   | _ :: _, a => by
     set_option backward.isDefEq.respectTransparency false in
@@ -303,7 +303,7 @@ theorem count_tail_le {a : α} {l : List α} : count a l.tail ≤ count a l :=
 theorem count_le_count_cons {a b : α} {l : List α} : count a l ≤ count a (b :: l) :=
   (sublist_cons_self _ _).count_le a
 
-theorem count_singleton {a b : α} : count a [b] = if b == a then 1 else 0 := by
+theorem count_singleton {a b : α} : count a [b] = if a == b then 1 else 0 := by
   simp [count_cons]
 
 @[simp, grind =] theorem count_append {a : α} {l₁ l₂ : List α} : count a (l₁ ++ l₂) = count a l₁ + count a l₂ :=
@@ -317,9 +317,9 @@ theorem count_flatten {a : α} {l : List (List α)} : count a l.flatten = (l.map
   simp only [count_eq_countP, countP_eq_length_filter, filter_reverse, length_reverse]
 
 theorem boole_getElem_le_count {a : α} {l : List α} {i : Nat} (h : i < l.length) :
-    (if l[i] == a then 1 else 0) ≤ l.count a := by
+    (if a == l[i] then 1 else 0) ≤ l.count a := by
   rw [count_eq_countP]
-  apply boole_getElem_le_countP (p := (· == a))
+  apply boole_getElem_le_countP (p := (a == ·))
 
 grind_pattern boole_getElem_le_count => l.count a, l[i]
 
@@ -328,7 +328,7 @@ variable [LawfulBEq α]
 @[simp] theorem count_cons_self {a : α} {l : List α} : count a (a :: l) = count a l + 1 := by
   simp [count_cons]
 
-@[simp] theorem count_cons_of_ne (h : b ≠ a) {l : List α} : count a (b :: l) = count a l := by
+@[simp] theorem count_cons_of_ne (h : a ≠ b) {l : List α} : count a (b :: l) = count a l := by
   simp [count_cons, h]
 
 theorem count_singleton_self {a : α} : count a [a] = 1 := by simp
@@ -337,7 +337,7 @@ theorem count_concat_self {a : α} {l : List α} : count a (concat l a) = count 
 
 @[simp]
 theorem count_pos_iff {a : α} {l : List α} : 0 < count a l ↔ a ∈ l := by
-  simp only [count, countP_pos_iff, beq_iff_eq, exists_eq_right]
+  simp only [count, countP_pos_iff, beq_iff_eq, exists_eq_right']
 
 @[simp] theorem one_le_count_iff {a : α} {l : List α} : 1 ≤ count a l ↔ a ∈ l :=
   count_pos_iff
@@ -351,26 +351,26 @@ theorem not_mem_of_count_eq_zero {a : α} {l : List α} (h : count a l = 0) : a 
 theorem count_eq_zero {l : List α} : count a l = 0 ↔ a ∉ l :=
   ⟨not_mem_of_count_eq_zero, count_eq_zero_of_not_mem⟩
 
-theorem count_eq_length {l : List α} : count a l = l.length ↔ ∀ b ∈ l, a = b := by
+theorem count_eq_length {l : List α} : count a l = l.length ↔ ∀ b ∈ l, b = a := by
   rw [count, countP_eq_length]
   refine ⟨fun h b hb => Eq.symm ?_, fun h b hb => ?_⟩
   · simpa using h b hb
   · rw [h b hb, beq_self_eq_true]
 
 @[simp] theorem count_replicate_self {a : α} {n : Nat} : count a (replicate n a) = n :=
-  (count_eq_length.2 <| fun _ h => (eq_of_mem_replicate h).symm).trans (length_replicate ..)
+  (count_eq_length.2 <| fun _ h => eq_of_mem_replicate h).trans (length_replicate ..)
 
 @[grind =] theorem count_replicate {a b : α} {n : Nat} : count a (replicate n b) = if b == a then n else 0 := by
   split <;> (rename_i h; simp only [beq_iff_eq] at h)
   · exact ‹b = a› ▸ count_replicate_self ..
   · exact count_eq_zero.2 <| mt eq_of_mem_replicate (Ne.symm h)
 
-theorem filter_beq {l : List α} (a : α) : l.filter (· == a) = replicate (count a l) a := by
+theorem filter_beq {l : List α} (a : α) : l.filter (a == ·) = replicate (count a l) a := by
   simp only [count, countP_eq_length_filter, eq_replicate_iff, mem_filter, beq_iff_eq]
-  exact ⟨trivial, fun _ h => h.2⟩
+  exact ⟨trivial, fun _ h => h.2.symm⟩
 
-theorem filter_eq [DecidableEq α] {l : List α} (a : α) : l.filter (· = a) = replicate (count a l) a :=
-  funext (Bool.beq_eq_decide_eq · a) ▸ filter_beq a
+theorem filter_eq [DecidableEq α] {l : List α} (a : α) : l.filter (a = ·) = replicate (count a l) a :=
+  funext (Bool.beq_eq_decide_eq a ·) ▸ filter_beq a
 
 @[grind =] theorem replicate_sublist_iff {l : List α} : replicate n a <+ l ↔ n ≤ count a l := by
   refine ⟨fun h => ?_, fun h => ?_⟩
@@ -391,7 +391,7 @@ theorem count_le_count_map {β} [BEq β] [LawfulBEq β] {l : List α} {f : α �
   apply countP_mono_left; simp +contextual
 
 theorem count_filterMap {α} [BEq β] {b : β} {f : α → Option β} {l : List α} :
-    count b (filterMap f l) = countP (fun a => f a == some b) l := by
+    count b (filterMap f l) = countP (fun a => some b == f a) l := by
   rw [count_eq_countP, countP_filterMap]
   congr
   ext a
@@ -404,18 +404,18 @@ theorem count_flatMap {α} [BEq β] {l : List α} {f : α → List β} {x : β} 
 
 @[grind =]
 theorem count_erase {a b : α} :
-    ∀ {l : List α}, count a (l.erase b) = count a l - if b == a then 1 else 0
+    ∀ {l : List α}, count a (l.erase b) = count a l - if a == b then 1 else 0
   | [] => by simp
   | c :: l => by
     rw [erase_cons]
-    if hc : c = b then
+    if hc : b = c then
       have hc_beq := beq_iff_eq.mpr hc
       rw [if_pos hc_beq, hc, count_cons, Nat.add_sub_cancel]
     else
       have hc_beq := beq_false_of_ne hc
       simp only [hc_beq, if_false, count_cons, count_cons, count_erase, reduceCtorEq]
-      if ha : b = a then
-        rw [ha, eq_comm] at hc
+      if ha : a = b then
+        rw [←ha, eq_comm] at hc
         rw [if_pos (beq_iff_eq.2 ha), if_neg (by simpa using Ne.symm hc), Nat.add_zero, Nat.add_zero]
       else
         rw [if_neg (by simpa using ha), Nat.sub_zero, Nat.sub_zero]
@@ -424,6 +424,6 @@ theorem count_erase {a b : α} :
     count a (List.erase l a) = count a l - 1 := by rw [count_erase, if_pos (by simp)]
 
 @[simp] theorem count_erase_of_ne (ab : a ≠ b) {l : List α} : count a (l.erase b) = count a l := by
-  rw [count_erase, if_neg (by simpa using ab.symm), Nat.sub_zero]
+  rw [count_erase, if_neg (by simpa using ab), Nat.sub_zero]
 
 end count

@@ -435,7 +435,7 @@ Examples:
   unless `a` is not present in which case it returns `l` -/
   go : List α → Array α → List α
   | [], _ => l
-  | x::xs, acc => bif x == a then acc.toListAppend xs else go xs (acc.push x)
+  | x::xs, acc => bif a == x then acc.toListAppend xs else go xs (acc.push x)
 
 @[csimp] theorem erase_eq_eraseTR : @List.erase = @eraseTR := by
   funext α _ l a; simp [eraseTR]
@@ -445,7 +445,7 @@ Examples:
   | nil => simp [List.erase, eraseTR.go, h]
   | cons x xs IH =>
     simp only [eraseTR.go, Array.toListAppend_eq, List.erase]
-    cases x == a
+    cases a == x
     · rw [IH] <;> simp_all
     · simp
 

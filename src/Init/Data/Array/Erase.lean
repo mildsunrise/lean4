@@ -187,14 +187,12 @@ theorem erase_of_not_mem [LawfulBEq α] {a : α} {xs : Array α} (h : a ∉ xs) 
   simp [List.erase_of_not_mem (by simpa using h)]
 
 -- The arguments are intentionally explicit.
-theorem erase_eq_eraseP' (a : α) (xs : Array α) : xs.erase a = xs.eraseP (· == a) := by
-  rcases xs with ⟨xs⟩
-  simp [List.erase_eq_eraseP']
-
--- The arguments are intentionally explicit.
-theorem erase_eq_eraseP [LawfulBEq α] (a : α) (xs : Array α) : xs.erase a = xs.eraseP (a == ·) := by
+theorem erase_eq_eraseP (a : α) (xs : Array α) : xs.erase a = xs.eraseP (a == ·) := by
   rcases xs with ⟨xs⟩
   simp [List.erase_eq_eraseP]
+
+@[deprecated erase_eq_eraseP (since := "2026-05-22")]
+def erase_eq_eraseP' := @erase_eq_eraseP
 
 @[simp] theorem erase_eq_empty_iff [LawfulBEq α] {xs : Array α} {a : α} :
     xs.erase a = #[] ↔ xs = #[] ∨ xs = #[a] := by
@@ -240,8 +238,8 @@ theorem mem_of_mem_erase {a b : α} {xs : Array α} (h : a ∈ xs.erase b) : a �
   erase_eq_eraseP b xs ▸ mem_eraseP_of_neg (mt eq_of_beq ab.symm)
 
 @[simp] theorem erase_eq_self_iff [LawfulBEq α] {xs : Array α} : xs.erase a = xs ↔ a ∉ xs := by
-  rw [erase_eq_eraseP', eraseP_eq_self_iff]
-  simp [forall_mem_ne']
+  rw [erase_eq_eraseP, eraseP_eq_self_iff]
+  simp [forall_mem_ne]
 
 @[grind _=_]
 theorem erase_filter [LawfulBEq α] {f : α → Bool} {xs : Array α} :
@@ -288,8 +286,8 @@ theorem erase_eq_iff [LawfulBEq α] {a : α} {xs : Array α} :
     xs.erase a = ys ↔
       (a ∉ xs ∧ xs = ys) ∨
         ∃ as bs, a ∉ as ∧ xs = as.push a ++ bs ∧ ys = as ++ bs := by
-  rw [erase_eq_eraseP', eraseP_eq_iff]
-  simp only [beq_iff_eq, forall_mem_ne', exists_and_left]
+  rw [erase_eq_eraseP, eraseP_eq_iff]
+  simp only [beq_iff_eq, forall_mem_ne, exists_and_left]
   constructor
   · rintro (⟨h, rfl⟩ | ⟨a', as, h, rfl, bs, rfl, rfl⟩)
     · left; simp_all

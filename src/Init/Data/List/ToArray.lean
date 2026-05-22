@@ -322,7 +322,7 @@ termination_by l.length - j
 
 set_option backward.isDefEq.respectTransparency false in
 private theorem idxAuxOf_toArray [BEq α] (a : α) (l : List α) (j : Nat) (w : l' = l.drop j) (h) :
-    l.toArray.idxOfAux a j = findFinIdx?.go (fun x => x == a) l l' j h := by
+    l.toArray.idxOfAux a j = findFinIdx?.go (a == ·) l l' j h := by
   unfold idxOfAux
   unfold findFinIdx?.go
   split <;> rename_i h'

@@ -42,7 +42,7 @@ theorem countP_set {p : α → Bool} {l : List α} {i : Nat} {a : α} (h : i < l
 
 @[grind =]
 theorem count_set [BEq α] {a b : α} {l : List α} {i : Nat} (h : i < l.length) :
-    (l.set i a).count b = l.count b - (if l[i] == b then 1 else 0) + (if a == b then 1 else 0) := by
+    (l.set i a).count b = l.count b - (if b == l[i] then 1 else 0) + (if b == a then 1 else 0) := by
   simp [count_eq_countP, countP_set, h]
 
 @[grind =]
@@ -71,11 +71,11 @@ theorem countP_replace [BEq α] [LawfulBEq α] {a b : α} {l : List α} {p : α 
 @[grind =]
 theorem count_replace [BEq α] [LawfulBEq α] {a b c : α} {l : List α} :
     (l.replace a b).count c =
-      if l.contains a then l.count c + (if b == c then 1 else 0) - (if a == c then 1 else 0) else l.count c := by
+      if l.contains a then l.count c + (if c == b then 1 else 0) - (if c == a then 1 else 0) else l.count c := by
   simp [count_eq_countP, countP_replace]
 
 @[grind =] theorem count_insert [BEq α] [LawfulBEq α] {a b : α} {l : List α} :
-    count a (List.insert b l) = max (count a l) (if b == a then 1 else 0) := by
+    count a (List.insert b l) = max (count a l) (if a == b then 1 else 0) := by
   simp only [List.insert, contains_eq_mem, decide_eq_true_eq, beq_iff_eq]
   split <;> rename_i h
   · split <;> rename_i h'

@@ -199,11 +199,11 @@ variable [BEq α]
 @[simp, grind =] theorem count_empty {a : α} : count a #[] = 0 := rfl
 
 theorem count_push {a b : α} {xs : Array α} :
-    count a (xs.push b) = count a xs + if b == a then 1 else 0 := by
+    count a (xs.push b) = count a xs + if a == b then 1 else 0 := by
   simp [count, countP_push]
 
-theorem count_eq_countP {a : α} {xs : Array α} : count a xs = countP (· == a) xs := rfl
-theorem count_eq_countP' {a : α} : count a = countP (· == a) := by
+theorem count_eq_countP {a : α} {xs : Array α} : count a xs = countP (a == ·) xs := rfl
+theorem count_eq_countP' {a : α} : count a = countP (a == ·) := by
   funext xs
   apply count_eq_countP
 
@@ -212,14 +212,14 @@ theorem count_le_size {a : α} {xs : Array α} : count a xs ≤ xs.size := count
 grind_pattern count_le_size => count a xs
 
 @[grind =]
-theorem count_eq_size_filter {a : α} {xs : Array α} : count a xs = (filter (· == a) xs).size := by
+theorem count_eq_size_filter {a : α} {xs : Array α} : count a xs = (filter (a == ·) xs).size := by
   simp [count, countP_eq_size_filter]
 
 theorem count_le_count_push {a b : α} {xs : Array α} : count a xs ≤ count a (xs.push b) := by
   simp [count_push]
 
 @[grind =]
-theorem count_singleton {a b : α} : count a #[b] = if b == a then 1 else 0 := by
+theorem count_singleton {a b : α} : count a #[b] = if a == b then 1 else 0 := by
   simp [count_eq_countP]
 
 @[simp, grind =] theorem count_append {a : α} {xs ys : Array α} : count a (xs ++ ys) = count a xs + count a ys :=
@@ -235,13 +235,13 @@ theorem count_singleton {a b : α} : count a #[b] = if b == a then 1 else 0 := b
   simp
 
 theorem boole_getElem_le_count {xs : Array α} {i : Nat} {a : α} (h : i < xs.size) :
-    (if xs[i] == a then 1 else 0) ≤ xs.count a := by
+    (if a == xs[i] then 1 else 0) ≤ xs.count a := by
   rw [count_eq_countP]
-  apply boole_getElem_le_countP (p := (· == a))
+  apply boole_getElem_le_countP (p := (a == ·))
 
 @[grind =]
 theorem count_set {xs : Array α} {i : Nat} {a b : α} (h : i < xs.size) :
-    (xs.set i a).count b = xs.count b - (if xs[i] == b then 1 else 0) + (if a == b then 1 else 0) := by
+    (xs.set i a).count b = xs.count b - (if b == xs[i] then 1 else 0) + (if b == a then 1 else 0) := by
   simp [count_eq_countP, countP_set]
 
 variable [LawfulBEq α]
@@ -249,14 +249,14 @@ variable [LawfulBEq α]
 @[simp] theorem count_push_self {a : α} {xs : Array α} : count a (xs.push a) = count a xs + 1 := by
   simp [count_push]
 
-@[simp] theorem count_push_of_ne {xs : Array α} (h : b ≠ a) : count a (xs.push b) = count a xs := by
+@[simp] theorem count_push_of_ne {xs : Array α} (h : a ≠ b) : count a (xs.push b) = count a xs := by
   simp_all [count_push]
 
 theorem count_singleton_self {a : α} : count a #[a] = 1 := by simp
 
 @[simp]
 theorem count_pos_iff {a : α} {xs : Array α} : 0 < count a xs ↔ a ∈ xs := by
-  simp only [count, countP_pos_iff, beq_iff_eq, exists_eq_right]
+  simp only [count, countP_pos_iff, beq_iff_eq, exists_eq_right']
 
 @[simp] theorem one_le_count_iff {a : α} {xs : Array α} : 1 ≤ count a xs ↔ a ∈ xs :=
   count_pos_iff
@@ -270,7 +270,7 @@ theorem not_mem_of_count_eq_zero {a : α} {xs : Array α} (h : count a xs = 0) :
 theorem count_eq_zero {xs : Array α} : count a xs = 0 ↔ a ∉ xs :=
   ⟨not_mem_of_count_eq_zero, count_eq_zero_of_not_mem⟩
 
-theorem count_eq_size {xs : Array α} : count a xs = xs.size ↔ ∀ b ∈ xs, a = b := by
+theorem count_eq_size {xs : Array α} : count a xs = xs.size ↔ ∀ b ∈ xs, b = a := by
   rw [count, countP_eq_size]
   refine ⟨fun h b hb => Eq.symm ?_, fun h b hb => ?_⟩
   · simpa using h b hb
@@ -282,12 +282,12 @@ theorem count_eq_size {xs : Array α} : count a xs = xs.size ↔ ∀ b ∈ xs, a
 theorem count_replicate {a b : α} {n : Nat} : count a (replicate n b) = if b == a then n else 0 := by
   simp [← List.toArray_replicate, List.count_replicate]
 
-theorem filter_beq {xs : Array α} (a : α) : xs.filter (· == a) = replicate (count a xs) a := by
+theorem filter_beq {xs : Array α} (a : α) : xs.filter (a == ·) = replicate (count a xs) a := by
   rcases xs with ⟨xs⟩
   simp [List.filter_beq]
 
-theorem filter_eq {α} [BEq α] [LawfulBEq α] [DecidableEq α] {xs : Array α} (a : α) : xs.filter (· = a) = replicate (count a xs) a :=
-  funext (Bool.beq_eq_decide_eq · a) ▸ filter_beq a
+theorem filter_eq {α} [BEq α] [LawfulBEq α] [DecidableEq α] {xs : Array α} (a : α) : xs.filter (a = ·) = replicate (count a xs) a :=
+  funext (Bool.beq_eq_decide_eq a ·) ▸ filter_beq a
 
 theorem replicate_count_eq_of_count_eq_size {xs : Array α} (h : count a xs = xs.size) :
     replicate (count a xs) a = xs := by
@@ -305,7 +305,7 @@ theorem count_le_count_map [BEq β] [LawfulBEq β] {xs : Array α} {f : α → �
   simp [List.count_le_count_map]
 
 theorem count_filterMap {α} [BEq β] {b : β} {f : α → Option β} {xs : Array α} :
-    count b (filterMap f xs) = countP (fun a => f a == some b) xs := by
+    count b (filterMap f xs) = countP (some b == f ·) xs := by
   rcases xs with ⟨xs⟩
   simp [List.count_filterMap]
 
@@ -322,10 +322,10 @@ theorem countP_replace {a b : α} {xs : Array α} {p : α → Bool} :
 
 theorem count_replace {a b c : α} {xs : Array α} :
     (xs.replace a b).count c =
-      if xs.contains a then xs.count c + (if b == c then 1 else 0) - (if a == c then 1 else 0) else xs.count c := by
+      if xs.contains a then xs.count c + (if c == b then 1 else 0) - (if c == a then 1 else 0) else xs.count c := by
   simp [count_eq_countP, countP_replace]
 
-theorem count_erase (a b : α) (xs : Array α) : count a (xs.erase b) = count a xs - if b == a then 1 else 0 := by
+theorem count_erase (a b : α) (xs : Array α) : count a (xs.erase b) = count a xs - if a == b then 1 else 0 := by
   rcases xs with ⟨l⟩
   simp [List.count_erase]
 
@@ -333,6 +333,6 @@ theorem count_erase (a b : α) (xs : Array α) : count a (xs.erase b) = count a 
     count a (xs.erase a) = count a xs - 1 := by rw [count_erase, if_pos (by simp)]
 
 @[simp] theorem count_erase_of_ne (ab : a ≠ b) (xs : Array α) : count a (xs.erase b) = count a xs := by
-  rw [count_erase, if_neg (by simpa using ab.symm), Nat.sub_zero]
+  rw [count_erase, if_neg (by simpa using ab), Nat.sub_zero]
 
 end count

@@ -2908,7 +2908,7 @@ variable [BEq α]
 
 @[simp, grind =] theorem replace_empty : (#v[] : Vector α 0).replace a b = #v[] := by simp
 
-@[grind =] theorem replace_singleton {a b c : α} : #v[a].replace b c = #v[if a == b then c else a] := by
+@[grind =] theorem replace_singleton {a b c : α} : #v[a].replace b c = #v[if b == a then c else a] := by
   simp
 
 -- This hypothesis could probably be dropped from some of the lemmas below,

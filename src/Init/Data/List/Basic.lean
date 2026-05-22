@@ -747,8 +747,8 @@ def rightpad (n : Nat) (a : α) (l : List α) : List α := l ++ replicate (n - l
 
 /-! ## List membership
 
-* `L.contains a : Bool` determines, using a `[BEq α]` instance, whether `L` contains an element `· == a`.
-* `a ∈ L : Prop` is the proposition (only decidable if `α` has decidable equality) that `L` contains an element `· = a`.
+* `L.contains a : Bool` determines, using a `[BEq α]` instance, whether `L` contains an element satisfying `a == ·`.
+* `a ∈ L : Prop` is the proposition (only decidable if `α` has decidable equality) that `L` contains an element satisfying `a = ·`.
 -/
 
 /-! ### EmptyCollection -/
@@ -1551,13 +1551,13 @@ Examples:
 -/
 protected def erase {α} [BEq α] : List α → α → List α
   | [],    _ => []
-  | a::as, b => match a == b with
+  | a::as, b => match b == a with
     | true  => as
     | false => a :: List.erase as b
 
 @[simp, grind =] theorem erase_nil [BEq α] (a : α) : [].erase a = [] := rfl
 @[grind =] theorem erase_cons [BEq α] {a b : α} {l : List α} :
-    (b :: l).erase a = if b == a then l else b :: l.erase a := by
+    (b :: l).erase a = if a == b then l else b :: l.erase a := by
   simp only [List.erase]; split <;> simp_all
 
 /--
@@ -1712,7 +1712,7 @@ Examples:
  * `["carrot", "potato", "broccoli"].idxOf "tomato" = 3`
  * `["carrot", "potato", "broccoli"].idxOf "anything else" = 3`
 -/
-def idxOf [BEq α] (a : α) : List α → Nat := findIdx (· == a)
+def idxOf [BEq α] (a : α) : List α → Nat := findIdx (a == ·)
 
 @[simp] theorem idxOf_nil [BEq α] : ([] : List α).idxOf x = 0 := rfl
 
@@ -1746,7 +1746,7 @@ Examples:
  * `["carrot", "potato", "broccoli"].idxOf? "tomato" = none`
  * `["carrot", "potato", "broccoli"].idxOf? "anything else" = none`
 -/
-@[inline] def idxOf? [BEq α] (a : α) : List α → Option Nat := findIdx? (· == a)
+@[inline] def idxOf? [BEq α] (a : α) : List α → Option Nat := findIdx? (a == ·)
 
 /-! ### findFinIdx? -/
 
@@ -1785,7 +1785,7 @@ Examples:
  * `["carrot", "potato", "broccoli"].finIdxOf? "anything else" = none`
 -/
 @[inline] def finIdxOf? [BEq α] (a : α) : (l : List α) → Option (Fin l.length) :=
-  findFinIdx? (· == a)
+  findFinIdx? (a == ·)
 
 /-! ### countP -/
 
@@ -1813,7 +1813,7 @@ Examples:
  * `[1, 1, 2, 3, 5].count 5 = 1`
  * `[1, 1, 2, 3, 5].count 4 = 0`
 -/
-@[inline] def count [BEq α] (a : α) : List α → Nat := countP (· == a)
+@[inline] def count [BEq α] (a : α) : List α → Nat := countP (a == ·)
 
 /-! ### lookup -/
 

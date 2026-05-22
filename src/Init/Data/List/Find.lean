@@ -1136,7 +1136,7 @@ The lemmas below should be made consistent with those for `findIdx` (and proved 
 
 @[grind =]
 theorem idxOf_cons [BEq α] :
-    (x :: xs : List α).idxOf y = bif x == y then 0 else xs.idxOf y + 1 := by
+    (x :: xs : List α).idxOf y = bif y == x then 0 else xs.idxOf y + 1 := by
   dsimp [idxOf]
   simp [findIdx_cons]
 
@@ -1203,7 +1203,7 @@ theorem idxOf?_eq_map_finIdxOf?_val [BEq α] {xs : List α} {a : α} :
 
 @[grind =] theorem finIdxOf?_cons [BEq α] {a : α} {xs : List α} :
     (a :: xs).finIdxOf? b =
-      if a == b then some ⟨0, by simp⟩ else (xs.finIdxOf? b).map (·.succ) := by
+      if b == a then some ⟨0, by simp⟩ else (xs.finIdxOf? b).map (·.succ) := by
   simp [finIdxOf?, findFinIdx?_cons]
 
 @[simp, grind =] theorem finIdxOf?_eq_none_iff [BEq α] [LawfulBEq α] {l : List α} {a : α} :
@@ -1217,19 +1217,19 @@ theorem idxOf?_eq_map_finIdxOf?_val [BEq α] {xs : List α} {a : α} :
 
 @[simp] theorem finIdxOf?_eq_some_iff [BEq α] [LawfulBEq α] {l : List α} {a : α} {i : Fin l.length} :
     l.finIdxOf? a = some i ↔ l[i] = a ∧ ∀ j (_ : j < i), ¬l[j] = a := by
-  simp only [finIdxOf?, findFinIdx?_eq_some_iff, beq_iff_eq]
+  simp only [finIdxOf?, findFinIdx?_eq_some_iff, beq_iff_eq, Eq.comm (a := a)]
 
 @[simp, grind =]
-theorem isSome_finIdxOf? [BEq α] [PartialEquivBEq α] {l : List α} {a : α} :
+theorem isSome_finIdxOf? [BEq α] {l : List α} {a : α} :
     (l.finIdxOf? a).isSome = l.contains a := by
   induction l with
   | nil => simp
   | cons x xs ih =>
     simp only [finIdxOf?_cons]
-    split <;> simp_all [BEq.comm]
+    split <;> simp_all
 
 @[simp]
-theorem isNone_finIdxOf? [BEq α] [PartialEquivBEq α] {l : List α} {a : α} :
+theorem isNone_finIdxOf? [BEq α] {l : List α} {a : α} :
     (l.finIdxOf? a).isNone = !l.contains a := by
   rw [← isSome_finIdxOf?, Option.not_isSome]
 
@@ -1242,10 +1242,10 @@ The lemmas below should be made consistent with those for `findIdx?` (and proved
 @[simp, grind =] theorem idxOf?_nil [BEq α] : ([] : List α).idxOf? a = none := rfl
 
 @[grind =] theorem idxOf?_cons [BEq α] {a : α} {xs : List α} {b : α} :
-    (a :: xs).idxOf? b = if a == b then some 0 else (xs.idxOf? b).map (· + 1) := by
+    (a :: xs).idxOf? b = if b == a then some 0 else (xs.idxOf? b).map (· + 1) := by
   simp [idxOf?, findIdx?_cons]
 
-@[simp] theorem idxOf?_singleton [BEq α] {a b : α} : [a].idxOf? b = if a == b then some 0 else none := by
+@[simp] theorem idxOf?_singleton [BEq α] {a b : α} : [a].idxOf? b = if b == a then some 0 else none := by
   simp [idxOf?_cons, idxOf?_nil]
 
 @[simp, grind =] theorem idxOf?_eq_none_iff [BEq α] [LawfulBEq α] {l : List α} {a : α} :
@@ -1260,7 +1260,7 @@ The lemmas below should be made consistent with those for `findIdx?` (and proved
 
 theorem idxOf?_eq_some_iff [BEq α] [LawfulBEq α] {l : List α} {a : α} {i : Nat} :
     l.idxOf? a = some i ↔ ∃ (h : i < l.length), l[i] = a ∧ ∀ j (_ : j < i), ¬l[j] = a := by
-  simp [idxOf?, findIdx?_eq_some_iff_getElem]
+  simp [idxOf?, findIdx?_eq_some_iff_getElem, Eq.comm (a := a)]
 
 @[simp, grind =]
 theorem isSome_idxOf? [BEq α] [LawfulBEq α] {l : List α} {a : α} :
@@ -1269,7 +1269,7 @@ theorem isSome_idxOf? [BEq α] [LawfulBEq α] {l : List α} {a : α} :
   | nil => simp
   | cons x xs ih =>
     simp only [idxOf?_cons]
-    split <;> simp_all [@eq_comm _ x a]
+    split <;> simp_all
 
 @[grind =]
 theorem isNone_idxOf? [BEq α] [LawfulBEq α] {l : List α} {a : α} :

@@ -4146,9 +4146,9 @@ variable [BEq α]
 
 @[simp, grind =] theorem replace_empty : (#[] : Array α).replace a b = #[] := by simp [replace]
 
-@[simp, grind =] theorem replace_singleton {a b c : α} : #[a].replace b c = #[if a == b then c else a] := by
+@[simp, grind =] theorem replace_singleton {a b c : α} : #[a].replace b c = #[if b == a then c else a] := by
   simp only [replace, List.finIdxOf?_toArray, List.finIdxOf?]
-  by_cases h : a == b <;> simp [h]
+  by_cases h : b == a <;> simp [h]
 
 @[simp, grind =] theorem size_replace {xs : Array α} : (xs.replace a b).size = xs.size := by
   simp only [replace]

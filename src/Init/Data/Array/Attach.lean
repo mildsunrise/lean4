@@ -530,7 +530,7 @@ theorem count_attach [BEq α] {xs : Array α} {a : {x // x ∈ xs}} :
   simp only [List.attach_toArray, List.attachWith_mem_toArray, List.count_toArray]
   rw [List.map_attach_eq_pmap, List.count_eq_countP]
   simp only [Subtype.beq_iff]
-  rw [List.countP_pmap, List.countP_attach (p := (fun x => x == a.1)), List.count]
+  rw [List.countP_pmap, List.countP_attach (p := (a.1 == ·)), List.count]
 
 @[simp, grind =]
 theorem count_attachWith [BEq α] {p : α → Prop} {xs : Array α} (H : ∀ a ∈ xs, p a) {a : {x // p x}} :

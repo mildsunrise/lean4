@@ -1119,7 +1119,7 @@ Examples:
 -/
 @[inline, expose]
 def count {α : Type u} [BEq α] (a : α) (as : Array α) : Nat :=
-  countP (· == a) as
+  countP (a == ·) as
 
 /--
 Applies a function to each element of the array, returning the resulting array of values.
@@ -1320,7 +1320,7 @@ def findIdx (p : α → Bool) (as : Array α) : Nat := (as.findIdx? p).getD as.s
 
 def idxOfAux [BEq α] (xs : Array α) (v : α) (i : Nat) : Option (Fin xs.size) :=
   if h : i < xs.size then
-    if xs[i] == v then some ⟨i, h⟩
+    if v == xs[i] then some ⟨i, h⟩
     else idxOfAux xs v (i+1)
   else none
 decreasing_by simp_wf; decreasing_trivial_pre_omega
@@ -1352,7 +1352,7 @@ Examples:
  * `#["carrot", "potato", "broccoli"].idxOf "tomato" = 3`
  * `#["carrot", "potato", "broccoli"].idxOf "anything else" = 3`
 -/
-def idxOf [BEq α] (a : α) : Array α → Nat := findIdx (· == a)
+def idxOf [BEq α] (a : α) : Array α → Nat := findIdx (a == ·)
 
 /--
 Returns the index of the first element equal to `a`, or `none` if no element is equal to `a`.
